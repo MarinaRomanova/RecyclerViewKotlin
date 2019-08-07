@@ -17,15 +17,24 @@ class CategoryAdapter(context: Context, categories: List<Category>) : BaseAdapte
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val categoryView: View
+        val holder: ViewHolder
 
-        categoryView = LayoutInflater.from(context).inflate(R.layout.category_list_item, null)
-        val categoryImage: ImageView = categoryView.findViewById(R.id.categoryImage)
-        val categoryName: TextView = categoryView.findViewById(R.id.categoryName)
+        if( convertView == null){
+            categoryView = LayoutInflater.from(context).inflate(R.layout.category_list_item, null)
+            holder = ViewHolder()
+            holder.categoryName = categoryView.findViewById(R.id.categoryName)
+            holder.categoryImage = categoryView.findViewById(R.id.categoryImage)
+
+            categoryView.tag = holder
+        } else {
+            holder = convertView.tag as ViewHolder
+            categoryView = convertView
+        }
 
         val category = categories[position]
-        categoryName.text = category.name
+        holder.categoryName?.text = category.name
         val resourceId = context.resources.getIdentifier(category.image, "drawable", context.packageName)
-        categoryImage.setImageResource(resourceId)
+        holder.categoryImage?.setImageResource(resourceId)
 
         return categoryView
     }
@@ -40,5 +49,10 @@ class CategoryAdapter(context: Context, categories: List<Category>) : BaseAdapte
 
     override fun getCount(): Int {
         return categories.count()
+    }
+
+    private class ViewHolder {
+        var categoryImage: ImageView? = null
+        var categoryName: TextView? = null
     }
 }
